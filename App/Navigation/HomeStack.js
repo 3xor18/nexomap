@@ -1,10 +1,15 @@
 import React from 'react';
-import { View } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack';
+import HomeScreen from '../Screens/HomeScreen';
+import FormHome from '../Components/Home/FormHome';
+
+const Stack = createStackNavigator();
 
 export default function HomeStack() {
     return (
-        <View>
-            <Text></Text>
-        </View>
+        <Stack.Navigator>
+            <Stack.Screen name='home' component={HomeScreen} options={{ title: 'NexoMap' }} />
+            <Stack.Screen name='formhome' component={FormHome} options={{ title: 'Producto Seleccionado' }} />
+        </Stack.Navigator>
     );
 }
