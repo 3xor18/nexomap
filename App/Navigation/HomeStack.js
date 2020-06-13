@@ -9,7 +9,7 @@ export default function HomeStack() {
     return (
         <Stack.Navigator>
             <Stack.Screen name='home' component={HomeScreen} options={{ title: 'NexoMap' }} />
-            <Stack.Screen name='formhome' component={FormHome} options={{ title: 'Producto Seleccionado' }} />
+            <Stack.Screen name='formhome' component={FormHome} />
         </Stack.Navigator>
     );
 }

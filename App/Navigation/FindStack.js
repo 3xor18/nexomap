@@ -8,7 +8,7 @@ export default function FindStack() {
     return (
         <Stack.Navigator>
             <Stack.Screen name='find' component={FindScreen} options={{ title: 'Productos Solicitados' }} />
-            <Stack.Screen name='formfind' component={FormFind} options={{ title: 'Producto Seleccionado' }} />
+            <Stack.Screen name='formfin' component={FormFind} options={{ title: 'Producto Seleccionado' }} />
         </Stack.Navigator>
     );
 }

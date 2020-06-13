@@ -3,6 +3,8 @@ import { View, Text } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 
 export default function FormFind() {
+
+    navigation.setOptions({ title: name })
     return (
         <View>
             <Text>Nombre Del Producto</Text>

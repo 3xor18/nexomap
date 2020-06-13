@@ -1,12 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Image } from 'react-native-elements'
 import { size } from 'lodash'
 import { useNavigation } from '@react-navigation/native'
 import { Input } from 'react-native-elements'
+import { useFocusEffect } from "@react-navigation/native";
+import { firebaseApp } from '../../Utils/FirebaseConfig';
+import firebase from "firebase/app";
+import "firebase/firestore";
+
+const db = firebase.firestore(firebaseApp);
 
 export default function ListBuy() {
     const navigation = useNavigation();
+    const [user, setUser] = useState(null);
+    const [ordenes, setOrdenes] = useState([]);
+    const [totalOrdenes, setTotalOrdenes] = useState(0);
+    const [startOrdenes, setStartOrdenes] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const limitOrdenes = 10;
+
     const buys = [
         {
             id: 'ad7acbea-c1b1-46c2-aed5-3ad53abb28ba',
@@ -45,11 +58,37 @@ export default function ListBuy() {
             title: 'Third Item',
         },
     ];
+
+    useFocusEffect(
+        useCallback(() => {
+            firebase.auth().onAuthStateChanged((userInfo) => {
+                db.collection("ordenes")
+                    .get()
+                    .then((snap) => {
+                        setTotalOrdenes(snap.size);
+                    });
+                const resultOrdenes = [];
+                db.collection("ordenes")
+                    .where("createBy", "==", userInfo.uid)
+                    .get()
+                    .then((response) => {
+                        setStartOrdenes(response.docs[response.docs.length - 1]);
+                        response.forEach((doc) => {
+                            const orden = doc.data();
+                            orden.id = doc.id;
+                            resultOrdenes.push(orden);
+                        });
+                        setOrdenes(resultOrdenes);
+                    });
+            })
+        }, [])
+    );
+
     return (
         <View>
             <FlatList
-                data={buys}
-                renderItem={({ item }) => <Buys title={item.title} navigation={navigation} />}
+                data={ordenes}
+                renderItem={({ item }) => <Buys ordenIn={item} navigation={navigation} />}
                 keyExtractor={item => item.id}
             />
         </View>
@@ -57,8 +96,9 @@ export default function ListBuy() {
 }
 
 function Buys(props) {
-    const { title, navigation } = props
-
+    const { ordenIn, navigation } = props
+    const { producto
+        , estado, cantidadPedido, tiempoEspera } = ordenIn
     const goProducto = () => {
         navigation.navigate('buyform')
     }
@@ -74,10 +114,10 @@ function Buys(props) {
                     />
                 </View>
                 <View>
-                    <Text style={styles.producName}>Nombre de Producto</Text>
-                    <Text style={styles.producdesc}>Cantidad Pedida= 1 KG</Text>
-                    <Text style={styles.producdesc}>Tiempo: 30 Minutos</Text>
-                    <Text style={styles.producdesc}>Estado: Buscando Match</Text>
+                    <Text style={styles.producName}>{producto.nombre}</Text>
+                    <Text style={styles.producdesc}>Cantidad Pedida: {cantidadPedido}</Text>
+                    <Text style={styles.producdesc}>Tiempo: {tiempoEspera}</Text>
+                    <Text style={styles.producdesc}>Estado: {estado}</Text>
                 </View>
             </View>
         </TouchableOpacity>

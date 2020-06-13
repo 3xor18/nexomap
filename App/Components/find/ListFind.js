@@ -59,7 +59,7 @@ export default function ListFind() {
 function Buys(props) {
     const { title, navigation } = props
     const goCompra = () => {
-        navigation.navigate('formfind')
+        navigation.navigate('formfin')
     }
 
     return (
